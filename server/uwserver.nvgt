@@ -1,4 +1,4 @@
-string[] devs = {"istek", "kannadiga"};
+string[] devs = {"kannadiga", "istek"};
 const string sndtype = ".ogg";
 #pragma asset "rules"
 #pragma asset "readme.txt"

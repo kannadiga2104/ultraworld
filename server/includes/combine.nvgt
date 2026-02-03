@@ -1550,7 +1550,7 @@
 					send_packet(6, "play getmeat.ogg " + p.x + " " + p.y + " " + p.z, p.x, p.y, p.z, maps[get_map_index(p.map)]);
 					send_reliable(p, "gutted!", 2);
 					p.inv_add_item("skinned_shark", -1);
-					p.inv_add_item("gutted_shark_meat", 5);
+					p.inv_add_item("gutted_shark_meat", 10);
 					if (lefthand == "skinned_shark")
 						send_reliable(p, "hempty 1", 0);
 					else

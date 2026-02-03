@@ -687,7 +687,7 @@ void netloop() {
 		msgs.insert_last("Teleporters can be used to remove yourself from an unknown area, by pressing alt+v and pressing backspace to choose where you want to go.");
 		msgs.insert_last("To get an account on our team talk server, you can send an admin tell and request an account.");
 		msgs.insert_last("Join us on whatsapp at https://chat.whatsapp.com/LkjhAmvhIK9AZsfTsLj0Bp?mode=ems_share_t");
-		//msgs.insert_last("contribute to our game at: https://github.com/amirmahdifard/ultraworld/");
+		msgs.insert_last("contribute to our game at: https://github.com/kannadiga2104/ultraworld unselected");
 		int frase = random(0, msgs.length() - 1);
 		send_reliable(0, "notify_startrek_chime " + msgs[frase], 0);
 	}
