@@ -2046,7 +2046,7 @@ void player_event(player@p, string event) {
 				p.sendpacket("You can only build this in down town", 0);
 				return;
 			}
-			if (p.gender == 0 and p.job != "salesman" or p.gender == 1 and p.job != "saleswoman") {
+			if ((p.gender == 0 and p.job != "salesman") or (p.gender == 1 and p.job != "saleswoman")) {
 				if (p.gender == 0) send_reliable(p, "you are not a salesman", 2);
 				else send_reliable(p, "you are not a saleswoman", 2);
 				return;
@@ -2055,7 +2055,21 @@ void player_event(player@p, string event) {
 				send_reliable(p, "You haven't bank account to do this action", 2);
 				return;
 			}
-			send_serverbox(p.peer_id, 2, 1, 0, -1, "pstore2", "press 1 to build a clothing store, 2 to build a weapon store, 4 to build a fastfood store, 5 to build a explosive store, 6 to build a misc store, 7 to build a medical store, 8 to build a fruit store, 9 to build a household store, 0 to build a team store, minus or - to build a jewelry");
+			server_menu2 m;
+			m.intro = "Choose a store type to build";
+			m.initial_packet = "pstore2";
+			m.add("clothing store", "clothing_store");
+			m.add("weapon store", "weapon_store");
+			//m.add("vehicle store", "vehicle_store");
+			m.add("fastfood store", "fastfood_store");
+			m.add("explosive store", "explosive_store");
+			m.add("misc store", "misc_store");
+			m.add("medical store", "medical_store");
+			m.add("fruit store", "fruit_store");
+			m.add("household store", "household_store");
+			m.add("team store", "team_store");
+			m.add("jewelry", "jewelry");
+			m.send(p.peer_id);
 		} else if (parsed[2] == "candle") {
 			if (can_use_item_at(p.x, p.y, p.z, maps[get_map_index(p.map)], parsed[2]) == false) {
 				send_reliable(p, "you can't put your " + parsed[2] + " here", 2);
@@ -2191,38 +2205,13 @@ void player_event(player@p, string event) {
 		else if (p.have_cycle_inventory == 0)
 			p.have_cycle_inventory = 1;
 		send_reliable(p, "havecycleinventory " + p.have_cycle_inventory, 0);
-	} else if (parsed[0] == "pstore2") {
+	} else if (parsed[0] == "pstore2" and parsed.length() > 1) {
 		if (parsed[1] == "back") {
 			p.sendpacket("canceled", 0);
 			return;
 		}
-		string number = string_trim_left(get_event_message(), 8);
-		string name;
-		if (number == 1)
-			name = "clothing_store";
-		else if (number == 2)
-			name = "weapon_store";
-		else if (number == 4)
-			name = "fastfood_store";
-		else if (number == 5)
-			name = "explosive_store";
-		else if (number == 6)
-			name = "misc_store";
-		else if (number == 7)
-			name = "medical_store";
-		else if (number == 8)
-			name = "fruit_store";
-		else if (number == 9)
-			name = "household_store";
-		else if (number == 0)
-			name = "team_store";
-		else if (number == "-")
-			name = "jewelry";
-		else {
-			p.sendpacket("canceled", 0);
-			return;
-		}
-		string mapname = "" + name + "_of_" + p.name + "";
+		string name = parsed[1];
+		string mapname = name + "_of_" + p.name;
 		if (map_exists(mapname)) {
 			send_reliable(p, "you already have a " + name + "", 0);
 			return;
@@ -2336,19 +2325,17 @@ void player_event(player@p, string event) {
 			send_reliable(p, "Operation canceled!", 0);
 			return;
 		} else {
-			p.inv_add_item("item_carier", -1);
 			p.missilez = string_to_number(parsed[1]);
 			if (can_spawn_item_at(p.missilex, p.missiley, p.missilez, maps[get_map_index(p.map)], p.launchitem) == false) {
 				send_reliable(p, "play_s error.ogg", 6);
 				send_reliable(p, p.launchitem + "s are not allowed there!", 0);
-				p.inv_add_item("item_carier", 1);
 				return;
 			} if (p.inv_item_number(p.launchitem) <= 0) {
 				send_reliable(p, "You don't have any " + p.launchitem + " to send with.", 0);
-				p.inv_add_item("item_carier", 1);
 				return;
 			}
 			send_packet(6, "play carrier_missile_start.ogg " + p.x + " " + p.y + " " + p.z, p.x, p.y, p.z, maps[get_map_index(p.map)]);
+			p.inv_add_item("item_carier", -1);
 			p.inv_add_item(p.launchitem, -1);
 			spawn_item_carier(p.x, p.y, p.z, p.missilex, p.missiley, p.missilez, maps[get_map_index(p.map)], p, p.launchitem, int_to_bool(p.launchmode));
 			p.missiletimer.restart();
