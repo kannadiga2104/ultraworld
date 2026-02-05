@@ -123,12 +123,12 @@ void use(player@p, string message) {
 				send_reliable(p, "error. You can't use this when you are pvp", 2);
 				return;
 			}
-			if (has_house(p.name) < 0 && has_apartment(p.name) < 0) {
-				send_reliable(p, "error. You haven't any house", 2);
+			if (has_house(p.name) < 0 && has_apartment(p.name) < 0 && has_tent(p.name) < 0) {
+				send_reliable(p, "error. You don't have any properties", 2);
 				return;
 			}
 			server_menu2 m;
-			m.intro = "select the house";
+			m.intro = "choose your property";
 			m.initial_packet = "usetelehouse";
 			for (uint i = 0; i < houses.length(); i++) {
 				if (houses[i].owner == p.name)
@@ -142,7 +142,14 @@ void use(player@p, string message) {
 				if (p.partner == apartments[i].owner)
 					m.add(string_replace(apartments[i].housemap, ".map", "", true), string_replace(apartments[i].housemap, ".map", "", true));
 			}
+			for (uint i = 0; i < tents.length(); i++) {
+				if (tents[i].owner == p.name)
+					m.add(string_replace(tents[i].housemap, ".map", "", true), string_replace(tents[i].housemap, ".map", "", true));
+				if (p.partner == tents[i].owner)
+					m.add(string_replace(tents[i].housemap, ".map", "", true), string_replace(tents[i].housemap, ".map", "", true));
+			}
 			m.send(p.peer_id);
+			send_reliable(p, "hempty " + parsed[2], 0);
 		} else if (parsed[1] == "wood") {
 			for (uint i = 0; i < houses.length(); i++) {
 				if (houses[i].x == p.x and houses[i].y == p.y and houses[i].z == p.z and houses[i].map == p.map) {
