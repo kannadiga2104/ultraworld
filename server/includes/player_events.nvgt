@@ -152,10 +152,18 @@ void player_event(player@p, string event) {
 			} else send_reliable(p, "you can't look at someone while sleeping", 2);
 		} else send_reliable(p, "that player could not be found", 2);
 	} else if (parsed[0] == "bid_with_amt" and parsed.length() >= 3) {
+		if (parsed[2] == "[back]") {
+			p.sendpacket("canceled", 0);
+			return;
+		}
 		double amount = string_to_number(parsed[1]);
 		int id = string_to_number(parsed[2]);
 		auction::make_bid(p, amount, id);
 	} else if (parsed[0] == "select_changelog_category" and parsed.length() >= 2) {
+		if (parsed[1] == "[back]") {
+			p.sendpacket("canceled", 0);
+			return;
+		}
 		string category = parsed[1];
 		if (category == "server") {
 			show_changelog("server", "changelogs/server.md", @p);
@@ -163,6 +171,10 @@ void player_event(player@p, string event) {
 			show_changelog("client", "changelogs/client.md", @p);
 		}
 	} else if (parsed[0] == "feedback_main_menu" && parsed.length() > 1) {
+		if (parsed[1] == "[back]") {
+			p.sendpacket("canceled", 0);
+			return;
+		}
 		string selection = parsed[1];
 		if (parsed[1] == "[cncel]") return;
 		if (selection == "new") {
@@ -177,10 +189,18 @@ void player_event(player@p, string event) {
 		string msg = string_trimleft(event, 15);
 		if (msg != "") add_feedback(p, msg);
 	} else if (parsed[0] == "view_my_feedback_options" && parsed.length() > 1) {
+		if (parsed[1] == "[back]") {
+			p.sendpacket("canceled", 0);
+			return;
+		}
 		int id = string_to_number(parsed[1]);
 		if (parsed[1] == "[cncel]") return;
 		show_user_feedback_options(p, id);
 	} else if (parsed[0] == "feedback_user_action" && parsed.length() > 2) {
+		if (parsed[1] == "[back]") {
+			p.sendpacket("canceled", 0);
+			return;
+		}
 		int id = string_to_number(parsed[1]);
 		string action = parsed[2];
 		if (parsed[2] == "[cncel]") return;
@@ -190,10 +210,18 @@ void player_event(player@p, string event) {
 			user_close_feedback(p, id);
 		}
 	} else if (parsed[0] == "view_feedback_options" && parsed.length() > 1) {
+		if (parsed[1] == "[back]") {
+			p.sendpacket("canceled", 0);
+			return;
+		}
 		int id = string_to_number(parsed[1]);
 		if (parsed[1] == "[cncel]") return;
 		show_admin_feedback_options(p, id);
 	} else if (parsed[0] == "feedback_admin_action" && parsed.length() > 2) {
+		if (parsed[1] == "[back]") {
+			p.sendpacket("canceled", 0);
+			return;
+		}
 		int id = string_to_number(parsed[1]);
 		string action = parsed[2];
 		if (parsed[2] == "[cncel]") return;
@@ -205,11 +233,15 @@ void player_event(player@p, string event) {
 			delete_feedback(p, id);
 		}
 	} else if (parsed[0] == "reply_feedback_input" and parsed.length() > 2) {
-		int id = string_to_number(parsed[1]);
 		if (parsed[2] == "[cncel]") return;
+		int id = string_to_number(parsed[1]);
 		string reply = string_trimleft(event, (parsed[0] + " " + parsed[1] + " ").length());
 		if (reply != "") reply_feedback(p, id, reply);
 	} else if (parsed[0] == "bid_select" and parsed.length() >= 2) {
+		if (parsed[1] == "[back]") {
+			p.sendpacket("canceled", 0);
+			return;
+		}
 		int id = string_to_number(parsed[1]);
 		Auction@ a = auction::get_auction(id);
 		if (@a != null) {
@@ -248,6 +280,10 @@ void player_event(player@p, string event) {
 		m.send(p.peer_id);
 	} else if (parsed[0] == "xp_set_mode") {
 		if (!p.is_admin() && !p.is_manager() && !p.is_dev()) return;
+		if (parsed[1] == "[back]") {
+			p.sendpacket("canceled", 0);
+			return;
+		}
 		if (parsed.length() < 3) return;
 		int day = string_to_number(parsed[1]);
 		int mode = string_to_number(parsed[2]);
@@ -265,14 +301,18 @@ void player_event(player@p, string event) {
 		}
 	} else if (parsed[0] == "bid_input" and parsed.length() >= 2) {
 		if (parsed.length() < 3) return;
+		if (parsed[2] == "[cncel]") return;
 		int id = string_to_number(parsed[1]);
 		double amount = string_to_number(parsed[2]);
 		if (parsed[2] == "[cncel]") return;
 		auction::make_bid(p, amount, id);
 	} else if (parsed[0] == "weather_menu") {
-		if (!p.is_dev() && !p.is_manager() && !p.is_admin()) return; // Corrected permission check order
+		if (!p.is_dev() && !p.is_manager() && !p.is_admin()) return;
+		if (parsed[1] == "[back]") {
+			p.sendpacket("canceled", 0);
+			return;
+		}
 		string action = parsed[1];
-		
 		if (action == "rain") {
 			if (chovendo == 1) {
 				chuvatimer.restart();

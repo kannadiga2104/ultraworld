@@ -22,7 +22,7 @@ void add_feedback(player@ p, string message) {
 }
 
 void show_feedback_menu(player@ p) {
-	cmenupage m;
+	cmenu m;
 	m.intro = "Feedback Menu";
 	m.initial_packet = "feedback_main_menu";
 	m.add("Send New Feedback", "new");
@@ -39,7 +39,7 @@ void list_my_feedbacks(player@ p) {
 		return;
 	}
 	string[] lines = string_split(file_get(feedback_file), "\n", true);
-	cmenupage m;
+	cmenu m;
 	m.intro = "Your Feedbacks";
 	m.initial_packet = "view_my_feedback_options";
 	bool found = false;
@@ -63,7 +63,7 @@ void list_my_feedbacks(player@ p) {
 }
 
 void show_user_feedback_options(player@ p, int id) {
-	cmenupage m;
+	cmenu m;
 	m.intro = "Feedback Options (ID " + id + ")";
 	m.initial_packet = "feedback_user_action " + id;
 	m.add("View Details", "view");
@@ -134,7 +134,7 @@ void list_manage_feedbacks(player@ p) {
 		return;
 	}
 	string[] lines = string_split(file_get(feedback_file), "\n", true);
-	cmenupage m;
+	cmenu m;
 	m.intro = "Manage Feedbacks";
 	m.initial_packet = "view_feedback_options";
 	bool found = false;
@@ -150,7 +150,7 @@ void list_manage_feedbacks(player@ p) {
 }
 
 void show_admin_feedback_options(player@ p, int id) {
-	cmenupage m;
+	cmenu m;
 	m.intro = "Feedback Actions (ID " + id + ")";
 	m.initial_packet = "feedback_admin_action " + id;
 	m.add("Reply", "reply");

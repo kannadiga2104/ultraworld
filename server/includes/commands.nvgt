@@ -43,7 +43,7 @@ void command(player@p, string command) {
 		}
 	} else if (parsed[0] == "/changes") {
 		if (parsed.length() == 1) {
-			cmenupage m;
+			cmenu m;
 			m.intro = "Select a change log category:";
 			m.initial_packet = "select_changelog_category";
 			m.add("Server Changes", "server");
@@ -98,7 +98,7 @@ void command(player@p, string command) {
 				send_reliable(0, "play_s notify_news2.ogg", 6);
 				send_reliable(0, "Auto XP Schedule is now DISABLED!", 2);
 			} else if (arg == "edit") {
-				cmenupage m;
+				cmenu m;
 				m.intro = "Select a day to edit schedule:";
 				m.initial_packet = "xp_edit_day";
 				for(int i=0; i<7; i++) {
@@ -422,31 +422,29 @@ void command(player@p, string command) {
 		teamchat(p, string_trim_left(get_event_message(), 3));
 		return;
 	} else if(parsed[0] == "/teams"){
-team@[] ts = find_best_teams();
-if (ts.length() < 1) {
-send_reliable(p, "There are currently no teams", 0);
-return;
-}
-cmenupage menu;
-menu.initial_packet = "teams";
-menu.intro = "There are " + ts.length() + " teams";
-menu.maxitem = 500;
-for(uint i = 0; i < ts.length(); i++){
-team@ t = ts[i];
-string item = t.id + " (known as " + t.teamname + ") with " + (t.players.length()) + " members, " + t.teamkills + " kills, and " + t.points + " points, leader is " + cn2n(t.teamleader);
-menu.add(item, "");
-}
-menu.send(p.peer_id);
+		team@[] ts = find_best_teams();
+		if (ts.length() < 1) {
+			send_reliable(p, "There are currently no teams", 0);
+			return;
+		}
+		cmenu menu;
+		menu.initial_packet = "teams";
+		menu.intro = "There are " + ts.length() + " teams";
+		for(uint i = 0; i < ts.length(); i++){
+			team@ t = ts[i];
+			string item = t.id + " (known as " + t.teamname + ") with " + (t.players.length()) + " members, " + t.teamkills + " kills, and " + t.points + " points, leader is " + cn2n(t.teamleader);
+			menu.add(item, "");
+		}
+		menu.send(p.peer_id);
 	} else if (parsed[0] == "/teammembers") {
 		int ist = is_in_team(p.name);
 		if (ist > -1) {
 			team@ t = teams[ist];
-			cmenupage menu;
+			cmenu menu;
 			menu.initial_packet = "teammembers";
 			teamplayer@[] onps = t.online_players;
 			teamplayer@[] offps = t.offline_players;
 			menu.intro = "There are " + t.players.length() + " members in total: " + onps.length() + " online and " + offps.length() + " offline.";
-			menu.maxitem = 500;
 			menu.add("Online Members", "");
 			for(uint i = 0; i < onps.length(); i++){
 				teamplayer@ tp = onps[i];
@@ -2522,7 +2520,7 @@ menu.send(p.peer_id);
 						return;
 					}
 				}
-				cmenupage m;
+				cmenu m;
 				m.intro = "Are you sure you would like to turn on your pvp? other players can attack you and kill you, you can't disable it for 30 minutes and you shouldn't be attacked or loos health in all that time.";
 				m.initial_packet = "confirm_pvp_on";
 				m.add("Yes", "yes");
@@ -2977,7 +2975,7 @@ menu.send(p.peer_id);
 			if (auction::list.length() == 1) {
 				auction::make_bid(p, amount, auction::list[0].id);
 			} else {
-				cmenupage m;
+				cmenu m;
 				m.intro = "Select an auction to bid " + amount;
 				m.initial_packet = "bid_with_amt " + amount;
 				for(uint i=0; i<auction::list.length(); i++) {
@@ -2989,7 +2987,7 @@ menu.send(p.peer_id);
 			if (auction::list.length() == 1) {
 				send_serverbox(p.peer_id, 0, -1, 0, -1, "bid_input " + auction::list[0].id, "Enter bid amount for " + auction::list[0].amount + " " + auction::list[0].item + " (Min: " + auction::list[0].minbid + " " + auction::list[0].need + ")");
 			} else {
-				cmenupage m;
+				cmenu m;
 				m.intro = "Select an auction to bid on";
 				m.initial_packet = "bid_select";
 				for(uint i=0; i<auction::list.length(); i++) {
@@ -3593,7 +3591,7 @@ menu.send(p.peer_id);
 		if (auction::list.length() == 1) {
 			auction::cancel(auction::list[0].id, reason);
 		} else {
-			cmenupage m;
+			cmenu m;
 			m.intro = "Select an auction to cancel (Reason: " + reason + "):";
 			m.initial_packet = "cancel_auction_select " + reason + "|";
 			m.add("All (Cancel everything)", "all");
@@ -3818,7 +3816,7 @@ menu.send(p.peer_id);
 		string[] files = find_files("playerstores/*.playerstore");
 		send_reliable(p.peer_id, "Disk files (" + files.length() + "): " + join(files, ", "), 0);
 	} else if (parsed[0] == "/weather" && (p.is_dev() || p.is_manager() || p.is_admin())) {
-		cmenupage m;
+		cmenu m;
 		m.intro = "Weather Control Menu";
 		m.initial_packet = "weather_menu";
 		m.add("Rain: " + (chovendo == 1 ? "ON" : "OFF"), "rain");
