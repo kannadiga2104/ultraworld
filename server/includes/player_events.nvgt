@@ -176,7 +176,6 @@ void player_event(player@p, string event) {
 			return;
 		}
 		string selection = parsed[1];
-		if (parsed[1] == "[cncel]") return;
 		if (selection == "new") {
 			send_serverbox(p.peer_id, 0, -1, 0, -1, "feedback_input", "Enter your feedback");
 		} else if (selection == "my") {
@@ -194,7 +193,6 @@ void player_event(player@p, string event) {
 			return;
 		}
 		int id = string_to_number(parsed[1]);
-		if (parsed[1] == "[cncel]") return;
 		show_user_feedback_options(p, id);
 	} else if (parsed[0] == "feedback_user_action" && parsed.length() > 2) {
 		if (parsed[1] == "[back]") {
@@ -203,7 +201,6 @@ void player_event(player@p, string event) {
 		}
 		int id = string_to_number(parsed[1]);
 		string action = parsed[2];
-		if (parsed[2] == "[cncel]") return;
 		if (action == "view") {
 			view_feedback_details(p, id);
 		} else if (action == "close") {
@@ -215,7 +212,6 @@ void player_event(player@p, string event) {
 			return;
 		}
 		int id = string_to_number(parsed[1]);
-		if (parsed[1] == "[cncel]") return;
 		show_admin_feedback_options(p, id);
 	} else if (parsed[0] == "feedback_admin_action" && parsed.length() > 2) {
 		if (parsed[1] == "[back]") {
@@ -224,7 +220,6 @@ void player_event(player@p, string event) {
 		}
 		int id = string_to_number(parsed[1]);
 		string action = parsed[2];
-		if (parsed[2] == "[cncel]") return;
 		if (action == "reply") {
 			send_serverbox(p.peer_id, 0, -1, 0, -1, "reply_feedback_input " + id, "Enter reply for feedback ID " + id);
 		} else if (action == "close") {
@@ -261,6 +256,10 @@ void player_event(player@p, string event) {
 			auction::cancel(string_to_number(id_str), reason);
 		}
 	} else if (parsed[0] == "confirm_pvp_on" and parsed.length() >= 2) {
+		if (parsed[1] == "[back]") {
+			p.sendpacket("canceled", 0);
+			return;
+		}
 		if (parsed[1] == "yes") {
 			p.pvp = 1;
 			send_packetn(6, p.name, "distsound pvpon " + p.x + " " + p.y + " " + p.z + " " + p.map, p.x, p.y, p.z, maps[get_map_index(p.map)]);
@@ -270,8 +269,12 @@ void player_event(player@p, string event) {
 		}
 	} else if (parsed[0] == "xp_edit_day") {
 		if (!p.is_admin() && !p.is_manager() && !p.is_dev()) return;
+		if (parsed[1] == "[back]") {
+			p.sendpacket("canceled", 0);
+			return;
+		}
 		int day = string_to_number(parsed[1]);
-		cmenupage m;
+		cmenu m;
 		m.intro = "Select XP Mode for " + get_day_name(day) + ":";
 		m.initial_packet = "xp_set_mode " + day;
 		for(int i=0; i<=5; i++) {
@@ -280,7 +283,7 @@ void player_event(player@p, string event) {
 		m.send(p.peer_id);
 	} else if (parsed[0] == "xp_set_mode") {
 		if (!p.is_admin() && !p.is_manager() && !p.is_dev()) return;
-		if (parsed[1] == "[back]") {
+		if (parsed[2] == "[back]") {
 			p.sendpacket("canceled", 0);
 			return;
 		}
@@ -304,7 +307,6 @@ void player_event(player@p, string event) {
 		if (parsed[2] == "[cncel]") return;
 		int id = string_to_number(parsed[1]);
 		double amount = string_to_number(parsed[2]);
-		if (parsed[2] == "[cncel]") return;
 		auction::make_bid(p, amount, id);
 	} else if (parsed[0] == "weather_menu") {
 		if (!p.is_dev() && !p.is_manager() && !p.is_admin()) return;
