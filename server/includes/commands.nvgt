@@ -3466,7 +3466,34 @@ void command(player@p, string command) {
 			c ++;
 		}
 		send_reliable(p, c + " inventories modified as to remove " + what, 0);
-		admintell(c + " inventories modified as to remove " + what);
+		admintell(p.name + " removed " + what + " from " + c + " inventories.");
+		return;
+	} else if (parsed[0] == "/ir" && parsed.length() > 2 && p.manager) {
+		string old_item = parsed[1];
+		string new_item = parsed[2];
+		string[] chars = find_directories("chars/*");
+		if (chars.length() < 1) return;
+		int64 c = 0;
+		for (uint i = 0; i < chars.length(); i++) {
+			inventory w;
+			player@ who = get_player_obj_from(chars[i]);
+			if (@who != null && who.inv.exists(old_item)) {
+				double amount = who.inv.get_item_amount(old_item);
+				who.inv_add_item(old_item, -amount);
+				who.inv_add_item(new_item, amount);
+				c ++;
+				continue;
+			}
+			w.import_inv(file_get("chars/" + chars[i] + "/inv.usr"));
+			if (!w.exists(old_item)) continue;
+			double amount = w.get_item_amount(old_item);
+			w.remove(old_item);
+			w.give(new_item, amount);
+			file_put("chars/" + chars[i] + "/inv.usr", w.export());
+			c ++;
+		}
+		send_reliable(p, c + " inventories modified. " + old_item + " renamed to " + new_item, 0);
+		admintell(p.name + " renamed " + old_item + " to " + new_item + " in " + c + " inventories.");
 		return;
 	} else if (parsed[0] == "/ig" && parsed.length() > 2 && p.manager) {
 		string what = parsed[1];
