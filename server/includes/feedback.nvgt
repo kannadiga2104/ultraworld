@@ -134,7 +134,7 @@ void list_manage_feedbacks(player@ p) {
 		return;
 	}
 	string[] lines = string_split(file_get(feedback_file), "\n", true);
-	cmenu m;
+	cmenupage m;
 	m.intro = "Manage Feedbacks";
 	m.initial_packet = "view_feedback_options";
 	bool found = false;
